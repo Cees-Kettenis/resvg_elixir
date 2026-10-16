@@ -1,11 +1,11 @@
 # PDF rendering fork
 
-Version `0.6.0-pdf.1` pins Resvg and usvg to
-[`fd5af37e`](https://github.com/Cees-Kettenis/resvg/commit/fd5af37ef2f17d649da846bda7004733b4ff9cc4).
-It combines the independent upstream fixes
-[#1163](https://github.com/linebender/resvg/pull/1163),
-[#1164](https://github.com/linebender/resvg/pull/1164), and
-[#1165](https://github.com/linebender/resvg/pull/1165) on clean upstream main.
+Version `0.6.0-pdf.2` pins Resvg and usvg to
+[`fb9ddf1a`](https://github.com/Cees-Kettenis/resvg/commit/fb9ddf1aacbffc6c1b5a5f0f50a6c079e08fb622).
+It starts from upstream main including merged filter-transform PR #1155, then
+applies the marker viewport fix #1163, shared feImage paint fix #1164, and
+text-path positioning fix #1166. The superseded affine feImage patch #1165 is
+omitted. The experimental fractional pattern patch is not included.
 Precompiled NIFs are published on this fork's GitHub release. The Elixir API is
 unchanged. `RESVG_BUILD=1` builds the same pinned source locally.
 
