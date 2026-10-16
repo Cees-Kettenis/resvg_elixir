@@ -1,8 +1,8 @@
 defmodule Resvg.MixProject do
   use Mix.Project
 
-  @source_url "https://github.com/mrdotb/resvg_nif"
-  @version "0.6.0"
+  @source_url "https://github.com/Cees-Kettenis/resvg_nif"
+  @version "0.6.0-pdf.1"
 
   def project do
     [

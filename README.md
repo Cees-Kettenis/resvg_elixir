@@ -1,3 +1,14 @@
+# PDF rendering fork
+
+Version `0.6.0-pdf.1` pins Resvg and usvg to
+[`fd5af37e`](https://github.com/Cees-Kettenis/resvg/commit/fd5af37ef2f17d649da846bda7004733b4ff9cc4).
+It combines the independent upstream fixes
+[#1163](https://github.com/linebender/resvg/pull/1163),
+[#1164](https://github.com/linebender/resvg/pull/1164), and
+[#1165](https://github.com/linebender/resvg/pull/1165) on clean upstream main.
+Precompiled NIFs are published on this fork's GitHub release. The Elixir API is
+unchanged. `RESVG_BUILD=1` builds the same pinned source locally.
+
 # Resvg (Rust NIFs for elixir)
 
 [![Build Status](https://github.com/mrdotb/resvg_nif/workflows/Tests/badge.svg)](https://github.com/mrdotb/resvg_nif/workflows/Tests/badge.svg)
