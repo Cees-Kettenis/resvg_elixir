@@ -15,7 +15,7 @@ defmodule Resvg.Native do
     otp_app: :resvg,
     crate: "resvg",
     base_url: "#{github_url}/releases/download/v#{version}",
-    force_build: System.get_env("RESVG_BUILD") in ["1", "true"],
+    force_build: true,
     version: version,
     targets: ~w(
       arm-unknown-linux-gnueabihf
