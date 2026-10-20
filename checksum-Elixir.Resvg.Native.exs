@@ -1,42 +1,42 @@
 %{
-  "libresvg-v0.6.0-pdf.2-nif-2.15-aarch64-apple-darwin.so.tar.gz" =>
-    "sha256:ec0098cb6ab4b9c85e5ab0e3750b48450075f7b693fb306758c93cca043fdc15",
-  "libresvg-v0.6.0-pdf.2-nif-2.15-aarch64-unknown-linux-gnu.so.tar.gz" =>
-    "sha256:6101aacf7de66b09904a13adbfe6d6dc2e1682d175dac5d678f46d7c36f02b29",
-  "libresvg-v0.6.0-pdf.2-nif-2.15-aarch64-unknown-linux-musl.so.tar.gz" =>
-    "sha256:66616bf89dd38e12c202d0773111c1cac25d687fc7cb15a597518267ab0ea84f",
-  "libresvg-v0.6.0-pdf.2-nif-2.15-arm-unknown-linux-gnueabihf.so.tar.gz" =>
-    "sha256:49c49601f33812b2cd4fb16879193004017a9d31f38f3b84b905be9c7697af66",
-  "libresvg-v0.6.0-pdf.2-nif-2.15-riscv64gc-unknown-linux-gnu.so.tar.gz" =>
-    "sha256:327722873fe6ced4c1aaf8e4b1f0f0b84b02eb0df3287ae3d7b50ddeb43f0763",
-  "libresvg-v0.6.0-pdf.2-nif-2.15-x86_64-apple-darwin.so.tar.gz" =>
-    "sha256:9c6b36897db5671fd713872675e101af553becaa41a3aff884c74d716d30a23e",
-  "libresvg-v0.6.0-pdf.2-nif-2.15-x86_64-unknown-linux-gnu.so.tar.gz" =>
-    "sha256:06ad35e912ce3392c2e794e4c26ffb05a677a3615e6fe0c544992eacf2401656",
-  "libresvg-v0.6.0-pdf.2-nif-2.15-x86_64-unknown-linux-musl.so.tar.gz" =>
-    "sha256:b3ed375f5951afa65bfce48bb73c563e5bebf92d6debe5e5b19f1245f36a32bf",
-  "libresvg-v0.6.0-pdf.2-nif-2.16-aarch64-apple-darwin.so.tar.gz" =>
-    "sha256:bb52aa2b39846ec53463abab8860c4387a7d314c6b48a0e19ffddf7e8b25b79e",
-  "libresvg-v0.6.0-pdf.2-nif-2.16-aarch64-unknown-linux-gnu.so.tar.gz" =>
-    "sha256:61c0541bd99a78c6468f5ea4bf206681eb38fd8fd947c0fec0eb11b8fa34dc7b",
-  "libresvg-v0.6.0-pdf.2-nif-2.16-aarch64-unknown-linux-musl.so.tar.gz" =>
-    "sha256:0b4f60ef691f2ebb9f41b8c8c521813907c389835612f453414c6caaf0fbb6bd",
-  "libresvg-v0.6.0-pdf.2-nif-2.16-arm-unknown-linux-gnueabihf.so.tar.gz" =>
-    "sha256:dc7045fe94741db7ecb1b80aa0aaee0325d8d7152980fc369fd9684af101f840",
-  "libresvg-v0.6.0-pdf.2-nif-2.16-riscv64gc-unknown-linux-gnu.so.tar.gz" =>
-    "sha256:bcf4b3987162d876fa4702096226f1e53d26cfe1881ad79554908a036442f901",
-  "libresvg-v0.6.0-pdf.2-nif-2.16-x86_64-apple-darwin.so.tar.gz" =>
-    "sha256:2091d918b518e0a8b943e762eddabe106e8a759926dde6d8aa3d94c9145e269e",
-  "libresvg-v0.6.0-pdf.2-nif-2.16-x86_64-unknown-linux-gnu.so.tar.gz" =>
-    "sha256:d26bdec267ac96a0e3f05b1508bd173672e30e9f812bb17effadb6282cd54efb",
-  "libresvg-v0.6.0-pdf.2-nif-2.16-x86_64-unknown-linux-musl.so.tar.gz" =>
-    "sha256:61fabec642aabb6029a4717e428e519a738f1bc00fa5f6d63dd95cd84aed066d",
-  "resvg-v0.6.0-pdf.2-nif-2.15-x86_64-pc-windows-gnu.dll.tar.gz" =>
-    "sha256:0df3a64407e1e364852f8ebfc2fbef7489f93610464f9f9ab19b7502a07cd062",
-  "resvg-v0.6.0-pdf.2-nif-2.15-x86_64-pc-windows-msvc.dll.tar.gz" =>
-    "sha256:cddea7bdacaaea3924d2282abdb31825dd8421a5e731158cdc3d85d18051c8c6",
-  "resvg-v0.6.0-pdf.2-nif-2.16-x86_64-pc-windows-gnu.dll.tar.gz" =>
-    "sha256:fe823c914bedb3d9ff8a1d03d15c2cf5409a3c41c0bd309eec213388c78c4ddd",
-  "resvg-v0.6.0-pdf.2-nif-2.16-x86_64-pc-windows-msvc.dll.tar.gz" =>
-    "sha256:c3df0ea0056fb9f00b4ac3d6a3852f85feb4d7f514a340a7d3e96a7594a8196b"
+  "libresvg-v0.6.0-pdf.3-nif-2.15-aarch64-apple-darwin.so.tar.gz" =>
+    "sha256:25d31d46e0c79d63f488d6c71baf4345b72e281390b5ae3847507d5b10dbfee9",
+  "libresvg-v0.6.0-pdf.3-nif-2.15-aarch64-unknown-linux-gnu.so.tar.gz" =>
+    "sha256:26fc061fabce6db03ca6049799c97b5b7017257acdad5106391d7b83795750e7",
+  "libresvg-v0.6.0-pdf.3-nif-2.15-aarch64-unknown-linux-musl.so.tar.gz" =>
+    "sha256:1ea3f1d031d80b297690cbf397eae6c4223414ebd5554d72dc12de1dcec6718e",
+  "libresvg-v0.6.0-pdf.3-nif-2.15-arm-unknown-linux-gnueabihf.so.tar.gz" =>
+    "sha256:c5294df49ae4c9917a3fbaac03eb620ebe84138bfbba214c2888a7bae81b15ac",
+  "libresvg-v0.6.0-pdf.3-nif-2.15-riscv64gc-unknown-linux-gnu.so.tar.gz" =>
+    "sha256:a584014d4ba8d362de447cf4fa8c2c88538d917cbe099a0327796adacf021e68",
+  "libresvg-v0.6.0-pdf.3-nif-2.15-x86_64-apple-darwin.so.tar.gz" =>
+    "sha256:c31ca7155a91d4a8c61ef507736c765dafa31c9fe2026e5c731cb9e787aaf486",
+  "libresvg-v0.6.0-pdf.3-nif-2.15-x86_64-unknown-linux-gnu.so.tar.gz" =>
+    "sha256:3210360b736f9c1ead9a85ef8ea1bcb5ed3b5b95e79a93909e9765bab3be3e9d",
+  "libresvg-v0.6.0-pdf.3-nif-2.15-x86_64-unknown-linux-musl.so.tar.gz" =>
+    "sha256:a51ad76e752f8c61266cd3f5d06b3e1ee61a6a4ca10946684a73b5f201708e38",
+  "libresvg-v0.6.0-pdf.3-nif-2.16-aarch64-apple-darwin.so.tar.gz" =>
+    "sha256:8334f2fd5f82d1897f6361aeba144c1c84aa328ee5e4bc413abc40e79d98c3fa",
+  "libresvg-v0.6.0-pdf.3-nif-2.16-aarch64-unknown-linux-gnu.so.tar.gz" =>
+    "sha256:1911eed9a9f53beec66fd1b9dce8cbf4b9a55c7665b413065eda7332bb452f26",
+  "libresvg-v0.6.0-pdf.3-nif-2.16-aarch64-unknown-linux-musl.so.tar.gz" =>
+    "sha256:b9da3611fe41f751ab3580e6d7c1084e54e688db01c114800fad841ebefce9cc",
+  "libresvg-v0.6.0-pdf.3-nif-2.16-arm-unknown-linux-gnueabihf.so.tar.gz" =>
+    "sha256:bd7ad532415143928f108762ec7a414f3fdcbf07e7693a0f6ba53eac6237210e",
+  "libresvg-v0.6.0-pdf.3-nif-2.16-riscv64gc-unknown-linux-gnu.so.tar.gz" =>
+    "sha256:43e20ab8196e316084667c924128a6946233fc24ff415afab14d4d2b1218a855",
+  "libresvg-v0.6.0-pdf.3-nif-2.16-x86_64-apple-darwin.so.tar.gz" =>
+    "sha256:d8423453f3efc2635de5b572ddaa5a8e3f0d05187ead79deba5853fd068d6565",
+  "libresvg-v0.6.0-pdf.3-nif-2.16-x86_64-unknown-linux-gnu.so.tar.gz" =>
+    "sha256:734a4467980a5de25abd404069a19b517d777b94ff0bde5bbeaa9da88a226922",
+  "libresvg-v0.6.0-pdf.3-nif-2.16-x86_64-unknown-linux-musl.so.tar.gz" =>
+    "sha256:3c83099544af4fe259d32f14484d67bdb8735aca8f7e112183b062109a3ea22b",
+  "resvg-v0.6.0-pdf.3-nif-2.15-x86_64-pc-windows-gnu.dll.tar.gz" =>
+    "sha256:cc6106b2db6266299fe1863704528c6f26cdc3046fa38dfef20e77734e58bc16",
+  "resvg-v0.6.0-pdf.3-nif-2.15-x86_64-pc-windows-msvc.dll.tar.gz" =>
+    "sha256:29fa06a51a871273ae1b2f7dcd93b81742d0f0ec20726ecfd139b3e4d1e83055",
+  "resvg-v0.6.0-pdf.3-nif-2.16-x86_64-pc-windows-gnu.dll.tar.gz" =>
+    "sha256:d778b54d5a8cc84ce66dc2e487298735ab069e32234b4d39748c7b2f3c0ba8ad",
+  "resvg-v0.6.0-pdf.3-nif-2.16-x86_64-pc-windows-msvc.dll.tar.gz" =>
+    "sha256:ac92c5321ecd8c4b99e870aa45da170d125999198934571877abf918c69e0c49",
 }
