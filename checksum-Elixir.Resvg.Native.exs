@@ -38,5 +38,5 @@
   "resvg-v0.6.0-pdf.3-nif-2.16-x86_64-pc-windows-gnu.dll.tar.gz" =>
     "sha256:d778b54d5a8cc84ce66dc2e487298735ab069e32234b4d39748c7b2f3c0ba8ad",
   "resvg-v0.6.0-pdf.3-nif-2.16-x86_64-pc-windows-msvc.dll.tar.gz" =>
-    "sha256:ac92c5321ecd8c4b99e870aa45da170d125999198934571877abf918c69e0c49",
+    "sha256:ac92c5321ecd8c4b99e870aa45da170d125999198934571877abf918c69e0c49"
 }
