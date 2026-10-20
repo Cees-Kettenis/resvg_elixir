@@ -11,11 +11,11 @@ path = "src/lib.rs"
 crate-type = ["cdylib"]
 
 [dependencies]
-resvg = { git = "https://github.com/Cees-Kettenis/resvg.git", rev = "fb9ddf1aacbffc6c1b5a5f0f50a6c079e08fb622" }
+resvg = { git = "https://github.com/Cees-Kettenis/resvg.git", rev = "5464662c0ec59ecc830c52418673b322da1791b5" }
 svgtypes = "0.16"
 rustler = "0.33.0"
 tiny-skia = "0.12"
-usvg = { git = "https://github.com/Cees-Kettenis/resvg.git", rev = "fb9ddf1aacbffc6c1b5a5f0f50a6c079e08fb622" }
+usvg = { git = "https://github.com/Cees-Kettenis/resvg.git", rev = "5464662c0ec59ecc830c52418673b322da1791b5" }
 
 [profile.release]
 lto = true

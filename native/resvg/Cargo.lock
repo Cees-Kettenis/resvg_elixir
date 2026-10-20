@@ -379,7 +379,7 @@ dependencies = [
 [[package]]
 name = "resvg"
 version = "0.48.1"
-source = "git+https://github.com/Cees-Kettenis/resvg.git?rev=fb9ddf1aacbffc6c1b5a5f0f50a6c079e08fb622#fb9ddf1aacbffc6c1b5a5f0f50a6c079e08fb622"
+source = "git+https://github.com/Cees-Kettenis/resvg.git?rev=5464662c0ec59ecc830c52418673b322da1791b5#5464662c0ec59ecc830c52418673b322da1791b5"
 dependencies = [
  "bytemuck",
  "gif",
@@ -613,7 +613,7 @@ dependencies = [
 [[package]]
 name = "usvg"
 version = "0.48.1"
-source = "git+https://github.com/Cees-Kettenis/resvg.git?rev=fb9ddf1aacbffc6c1b5a5f0f50a6c079e08fb622#fb9ddf1aacbffc6c1b5a5f0f50a6c079e08fb622"
+source = "git+https://github.com/Cees-Kettenis/resvg.git?rev=5464662c0ec59ecc830c52418673b322da1791b5#5464662c0ec59ecc830c52418673b322da1791b5"
 dependencies = [
  "base64",
  "data-url",
