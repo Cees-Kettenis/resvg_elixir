@@ -1,78 +1,120 @@
-name: Build precompiled NIFs
-
-env:
-  NIF_DIRECTORY: "native/resvg"
+name: Build native release
 
 on:
   push:
-    branches:
-      - master
-    paths:
-      # Just run on main branch if "native" path changed.
-      - "native/**"
-      # Also run if this file changes.
-      - ".github/workflows/release.yml"
     tags:
-      - "*"
+      - "resvg_elixir-v*"
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   build_release:
-    name: NIF ${{ matrix.nif }} - ${{ matrix.job.target }} (${{ matrix.job.os }})
+    name: NIF ${{ matrix.nif }} - ${{ matrix.job.target }}
     runs-on: ${{ matrix.job.os }}
     strategy:
       fail-fast: false
       matrix:
-        nif: ["2.16", "2.15"]
+        nif: ["2.15"]
         job:
-          - { target: x86_64-apple-darwin, os: macos-15 }
-          - { target: aarch64-apple-darwin, os: macos-15 }
-          - { target: arm-unknown-linux-gnueabihf, os: ubuntu-22.04, use-cross: true }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04, use-cross: true }
-          - { target: aarch64-unknown-linux-musl, os: ubuntu-22.04, use-cross: true }
-          - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-22.04, use-cross: true }
-          - { target: x86_64-unknown-linux-gnu, os: ubuntu-22.04, use-cross: true }
-          - { target: x86_64-unknown-linux-musl, os: ubuntu-22.04, use-cross: true }
-          - { target: x86_64-pc-windows-gnu, os: windows-2022 }
-          - { target: x86_64-pc-windows-msvc, os: windows-2022 }
-
+          - {target: x86_64-apple-darwin, os: macos-15}
+          - {target: aarch64-apple-darwin, os: macos-15}
+          - {target: arm-unknown-linux-gnueabihf, os: ubuntu-22.04, use-cross: true}
+          - {target: aarch64-unknown-linux-gnu, os: ubuntu-22.04, use-cross: true}
+          - {target: aarch64-unknown-linux-musl, os: ubuntu-22.04, use-cross: true}
+          - {target: riscv64gc-unknown-linux-gnu, os: ubuntu-22.04, use-cross: true}
+          - {target: x86_64-unknown-linux-gnu, os: ubuntu-22.04, use-cross: true}
+          - {target: x86_64-unknown-linux-musl, os: ubuntu-22.04, use-cross: true}
+          - {target: x86_64-pc-windows-gnu, os: windows-2022}
+          - {target: x86_64-pc-windows-msvc, os: windows-2022}
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-
-      - name: Extract project version
+      - uses: actions/checkout@v4
+      - name: Read and validate release version
         shell: bash
         run: |
-          # Get the project version from mix.exs
-          echo "PROJECT_VERSION=$(sed -n 's/^  @version "\(.*\)"/\1/p' mix.exs | head -n1)" >> $GITHUB_ENV
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+          version=$(sed -n 's/^  @version "\(.*\)"/\1/p' mix.exs)
+          test -n "$version"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            test "$GITHUB_REF_NAME" = "resvg_elixir-v$version"
+          fi
+          echo "PROJECT_VERSION=$version" >> "$GITHUB_ENV"
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: ${{ matrix.job.target }}
-
-      - name: Build the project
+          targets: ${{ matrix.job.target }}
+      - name: Build native library
         id: build-crate
         uses: philss/rustler-precompiled-action@v1.0.0
         with:
-          project-name: resvg
+          project-name: resvg_elixir
           project-version: ${{ env.PROJECT_VERSION }}
           target: ${{ matrix.job.target }}
           nif-version: ${{ matrix.nif }}
           use-cross: ${{ matrix.job.use-cross }}
-          project-dir: "native/resvg"
-
-      - name: Artifact upload
-        uses: actions/upload-artifact@v4
+          project-dir: native/resvg_elixir
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-crate.outputs.file-name }}
           path: ${{ steps.build-crate.outputs.file-path }}
+      - name: Upload native archive
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.build-crate.outputs.file-path }}
 
-      - name: Publish archives and packages
-        uses: softprops/action-gh-release@v1
+  prepare_hex_package:
+    name: Prepare checksums and Hex package
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build_release
+    runs-on: ubuntu-22.04
+    env:
+      RESVG_ELIXIR_BUILD: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "29"
+          elixir-version: "1.20"
+      - run: mix deps.get
+      - run: mix rustler_precompiled.download ResvgElixir.Native --all
+      - run: mix format checksum-Elixir.ResvgElixir.Native.exs
+      - run: mix hex.build
+      - uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{ steps.build-crate.outputs.file-path }}
-        if: startsWith(github.ref, 'refs/tags/')
+            checksum-Elixir.ResvgElixir.Native.exs
+            resvg_elixir-*.tar
+
+  test_hex_package:
+    name: Package [${{ matrix.os }}, Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }}]
+    needs: prepare_hex_package
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-22.04, elixir: "1.14", otp: "25"}
+          - {os: ubuntu-22.04, elixir: "1.20", otp: "29"}
+          - {os: macos-15, elixir: "1.20", otp: "29"}
+          - {os: windows-2022, elixir: "1.20", otp: "29"}
+    env:
+      MIX_ENV: prod
+      GH_TOKEN: ${{ github.token }}
+      RESVG_ELIXIR_PACKAGE: ${{ github.workspace }}/tmp/release-package
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - name: Download and unpack the Hex package
+        shell: bash
+        run: |
+          mkdir -p tmp/release-download "$RESVG_ELIXIR_PACKAGE"
+          gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+            --pattern 'resvg_elixir-*.tar' --dir tmp/release-download
+          tar -xf tmp/release-download/resvg_elixir-*.tar -C tmp/release-download
+          tar -xzf tmp/release-download/contents.tar.gz -C "$RESVG_ELIXIR_PACKAGE"
+      - name: Test precompiled loading in a fresh consumer
+        run: elixir test/release_smoke.exs

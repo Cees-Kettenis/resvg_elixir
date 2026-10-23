@@ -1,8 +1,13 @@
-defmodule Resvg do
+defmodule ResvgElixir do
   @external_resource "README.md"
 
   @moduledoc """
-  Provides functions to convert svg to png using resvg.
+  Converts SVG to PNG using the maintained `resvg_elixir` bindings.
+
+  This package tracks upstream resvg development and carries tested rendering
+  fixes through a pinned Rust renderer. It is maintained by Cornelis Kettenis
+  and derives from `mrdotb/resvg_nif`. See the upstream renderer guide for the
+  exact renderer revision included in this release.
 
   ## Common options
 
@@ -38,13 +43,13 @@ defmodule Resvg do
     `Comic Sans MS`.
     * `:fantasy_family` - Sets the `fantasy` font family, default to
     `Impact`.
-    * `:monospace_family` - Sets the `monoscape` font family, default to
+    * `:monospace_family` - Sets the `monospace` font family, default to
     `Courier New`.
     * `:font_files` - Load specified font files into the fonts database.
     * `:font_dirs` - Load all fonts from the specified directory into the fonts
     database.
-    * `:skip_system_fonts` - Disable systems fonts loading. You should add some
-    some fonts with `:font_files` or `:font_dirs` otherwise, text elements will
+    * `:skip_system_fonts` - Disable system font loading. Add fonts with
+    `:font_files` or `:font_dirs` otherwise, text elements will
     not be processed.
     * `:fontdb` - A reusable font database handle from `init_fontdb/1`. When set,
     the render reuses that database (a cheap `Arc` clone) instead of re-parsing
@@ -53,7 +58,7 @@ defmodule Resvg do
     repaint many frames with the same fonts.
   """
 
-  alias Resvg.Options
+  alias ResvgElixir.Options
 
   @type png_buffer :: [0..255]
   @type png_binary :: binary()
@@ -70,10 +75,10 @@ defmodule Resvg do
 
   ## Examples
 
-      Resvg.svg_to_png("input.svg", "output.png")
+      ResvgElixir.svg_to_png("input.svg", "output.png")
       :ok
 
-      Resvg.svg_to_png("doesnotexist.svg", "output.png")
+      ResvgElixir.svg_to_png("doesnotexist.svg", "output.png")
       {:error, "Error loading svg file: No such file or directory (os error 2)"}
   """
   @spec svg_to_png(
@@ -83,7 +88,7 @@ defmodule Resvg do
         ) :: :ok | {:error, String.t()}
   def svg_to_png(in_svg, out_png, opts \\ []) do
     options = struct(Options, opts)
-    Resvg.Native.svg_to_png(in_svg, out_png, options)
+    ResvgElixir.Native.svg_to_png(in_svg, out_png, options)
   end
 
   @doc ~S"""
@@ -103,7 +108,7 @@ defmodule Resvg do
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
           <rect width="100" height="100" />
         </svg>"
-      Resvg.svg_string_to_png(svg_string, "output.png", resources_dir: "/tmp")
+      ResvgElixir.svg_string_to_png(svg_string, "output.png", resources_dir: "/tmp")
       :ok
   """
   @spec svg_string_to_png(
@@ -113,7 +118,7 @@ defmodule Resvg do
         ) :: :ok | {:error, String.t()}
   def svg_string_to_png(svg_string, out_png, opts) do
     options = struct(Options, opts)
-    Resvg.Native.svg_string_to_png(svg_string, out_png, options)
+    ResvgElixir.Native.svg_string_to_png(svg_string, out_png, options)
   end
 
   @doc ~S"""
@@ -132,7 +137,7 @@ defmodule Resvg do
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
           <rect width="100" height="100" />
         </svg>"
-      Resvg.svg_string_to_png(svg_string, "output.png", resources_dir: "/tmp")
+      ResvgElixir.svg_string_to_png(svg_string, "output.png", resources_dir: "/tmp")
       {:ok, buffer}
   """
   @spec svg_string_to_png_buffer(
@@ -141,7 +146,7 @@ defmodule Resvg do
         ) :: {:ok, png_buffer} | {:error, String.t()}
   def svg_string_to_png_buffer(svg_string, opts) do
     options = struct(Options, opts)
-    Resvg.Native.svg_string_to_png_buffer(svg_string, options)
+    ResvgElixir.Native.svg_string_to_png_buffer(svg_string, options)
   end
 
   @doc """
@@ -156,14 +161,14 @@ defmodule Resvg do
 
   ## Examples
 
-      {:ok, db} = Resvg.init_fontdb(font_files: ["/path/DejaVuSans.ttf"], skip_system_fonts: true)
-      :ok = Resvg.svg_string_to_png(svg, "out.png", resources_dir: "/tmp", fontdb: db)
+      {:ok, db} = ResvgElixir.init_fontdb(font_files: ["/path/DejaVuSans.ttf"], skip_system_fonts: true)
+      :ok = ResvgElixir.svg_string_to_png(svg, "out.png", resources_dir: "/tmp", fontdb: db)
   """
   @spec init_fontdb(options :: Options.resvg_options()) ::
           {:ok, reference()} | {:error, String.t()}
   def init_fontdb(opts \\ []) do
     options = struct(Options, opts)
-    Resvg.Native.init_fontdb(options)
+    ResvgElixir.Native.init_fontdb(options)
   end
 
   @doc """
@@ -177,7 +182,7 @@ defmodule Resvg do
         ) :: {:ok, png_binary} | {:error, String.t()}
   def svg_string_to_png_binary(svg_string, opts \\ []) do
     options = struct(Options, opts)
-    Resvg.Native.svg_string_to_png_binary(svg_string, options)
+    ResvgElixir.Native.svg_string_to_png_binary(svg_string, options)
   end
 
   @doc """
@@ -191,14 +196,14 @@ defmodule Resvg do
 
   ## Examples
 
-      Resvg.list_fonts(resources_dir: "/tmp")
+      ResvgElixir.list_fonts(resources_dir: "/tmp")
       {:ok, ["/usr/share/fonts/truetype/dejavu/DejaVuSansMono-BoldOblique.ttf..", ...]}
   """
   @spec list_fonts(options :: Options.resvg_options()) ::
           {:ok, [String.t()]} | {:error, String.t()}
   def list_fonts(opts) do
     options = struct(Options, opts)
-    Resvg.Native.list_fonts(options)
+    ResvgElixir.Native.list_fonts(options)
   end
 
   @doc """
@@ -206,13 +211,13 @@ defmodule Resvg do
 
   `opts` refer to [options](#module-common-options)
 
-  The functions return a list of `%Rsvg.Native.Node{}`s.
+  The function returns a list of `%ResvgElixir.Native.Node{}` structs.
 
   ## Examples
 
-      Resvg.query_all("rustacean.svg")
+      ResvgElixir.query_all("rustacean.svg")
       [
-        %Resvg.Native.Node{
+        %ResvgElixir.Native.Node{
           id: "Layer-1",
           x: -63.99300003051758,
           y: 90.14399719238281,
@@ -221,8 +226,10 @@ defmodule Resvg do
         }
       ]
   """
+  @spec query_all(Path.t(), Options.resvg_options()) ::
+          [ResvgElixir.Native.Node.t()] | {:error, String.t()}
   def query_all(in_svg, opts \\ []) do
     options = struct(Options, opts)
-    Resvg.Native.query_all(in_svg, options)
+    ResvgElixir.Native.query_all(in_svg, options)
   end
 end

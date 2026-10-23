@@ -1,68 +1,60 @@
-# Contributing to resvg_nif
+# Contributing to resvg_elixir
 
-Thanks for considering to contribute to resvg_nif. ❤
-
-Bug reports, feature suggestions, and pull requests for any open issues are very welcome. Issues can be reported on GitHub: https://github.com/mrdotb/resvg_nif/issues/new.
-
-Please read and follow our [Code of Conduct](https://github.com/mrdotb/resvg_nif/blob/main/CODE_OF_CONDUCT.md).
+Report binding issues and propose changes in
+[Cees-Kettenis/resvg_elixir](https://github.com/Cees-Kettenis/resvg_elixir).
+The project is maintained by Cornelis Kettenis. Please follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Development setup
- 
-In order to setup the development environment you need to have some dependencies installed on your machine:
 
-- [git](https://git-scm.com/downloads)
-- [Rust](https://www.rust-lang.org/learn/get-started)
-- [Elixir](https://elixir-lang.org/install.html)
+Install Git, Elixir/Erlang and a current stable Rust toolchain. The package
+supports Elixir 1.14 or newer; its approval-test dependency requires Elixir
+1.16 or newer for development. `.tool-versions` records the current development runtime.
+The pinned renderer's Rust dependencies may require a newer compiler than
+resvg's own minimum supported Rust version.
 
-Checkout the resvg_nif repository with
-
-```
-$ git clone git@github.com:mrdotb/resvg_nif.git
-```
-
-Then step into the project directory and install the dependencies with 
-
-```
+```sh
+git clone https://github.com/Cees-Kettenis/resvg_elixir.git
+cd resvg_elixir
 mix deps.get
+RESVG_ELIXIR_BUILD=1 mix compile --warnings-as-errors
+RESVG_ELIXIR_BUILD=1 mix test
 ```
 
+Building this checkout from source is necessary before the first branded
+release has published binaries and checksums. The rename deliberately does not
+reuse the original fork's `Resvg.Native` binaries.
 
-To force local compilation you need to set the env
-```
-export RESVG_BUILD=1 
-```
+## Checks
 
-## How to Contribute
-
-Here’s how to contribute:
-
-* Fork it (https://github.com/mrdotb/resvg_nif/fork)
-* Create your feature branch (git checkout -b feature/my-new-feature)
-* Commit your changes (git commit -am 'Add some feature')
-* Push to the branch (git push origin feature/my-new-feature)
-* Create a new Pull Request
-
-Try to add tests along with your new feature. This will ensure that your code does not break existing functionality and that your feature is working as expected. You can run the tests with:
-
-```bash
-mix test
+```sh
+mix format.check
+cargo check --locked --manifest-path native/resvg_elixir/Cargo.toml
+cargo test --locked --manifest-path native/resvg_elixir/Cargo.toml
+RESVG_ELIXIR_BUILD=1 mix test
+RESVG_ELIXIR_BUILD=1 mix docs --warnings-as-errors
 ```
 
-If you’ve changed any Elixir code or Rust code, please run Elixir’s and Rust's  code formatter before committing your changes:
+`mix format.all` formats Elixir and Rust source. Rust commands need Cargo on
+`PATH`; a Rustup-managed stable toolchain can be selected with
+`RUSTUP_TOOLCHAIN=stable`.
 
-```bash
-mix format.all
-```
+Rendering tests retain their checked-in reference images. Investigate a changed
+image before updating its reference. The existing approval helper writes
+working output images during tests; review `git diff` after running the suite.
 
-This will keep the code style consistent and future code diffs as small as possible.
+Keep generated output and investigations under ignored `tmp/`. Package files
+explicitly include native source and build configuration, and exclude Cargo
+build output.
 
-## Publishing a new package version
+## Updating the renderer
 
-For detailed info about what needs to be done in order to publish a new version of
-the resvg package on hex.pm, please refer to the release flow section in the
-[precompilation guide](https://hexdocs.pm/rustler_precompiled/precompilation_guide.html)
-of `rustler_precompiled`.
+Follow [the upstream update policy](docs/upstream.md). Keep resvg and usvg
+pinned to the same reviewed Rust revision. Rebuild native binaries whenever
+native source, crate identity or the renderer pin changes.
 
----------
+## Release preparation
 
-As a contributor, please keep in mind this project is free and open source software. Maintainers are not paid to work on it, so there might be times were the maintainers seem unresponsive. If you have that feeling, please be patient and be assured, that all team members try their best to review your contribution and reply to you as soon as their time allows.
+Follow [the release guide](docs/releases.md) for native builds, checksums,
+package validation and Hex publication. A normal source commit does not
+publish a Hex package.

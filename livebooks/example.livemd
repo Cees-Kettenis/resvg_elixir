@@ -1,8 +1,11 @@
-# Resvg example
+# resvg_elixir examples
+
+These examples use the first published `resvg_elixir` release. For development
+before publication, follow [Contributing](../CONTRIBUTING.md).
 
 ```elixir
 Mix.install([
-  {:resvg, "~> 0.5"},
+  {:resvg_elixir, "~> 0.1.0"},
   {:req, "~> 0.5"},
   {:kino, "~> 0.9"}
 ])
@@ -12,9 +15,8 @@ Mix.install([
 
 ```elixir
 defmodule H do
-  def kino_image_from_buffer(buffer) do
-    binary = :erlang.list_to_binary(buffer)
-    Kino.Image.new(binary, :png)
+  def kino_image_from_png(png) do
+    Kino.Image.new(png, :png)
   end
 
   def download!(url) do
@@ -36,20 +38,20 @@ path = __DIR__
 ```elixir
 rustacean_svg =
   H.download!(
-    "https://raw.githubusercontent.com/mrdotb/resvg_nif/master/test/support/rustacean.svg"
+    "https://raw.githubusercontent.com/Cees-Kettenis/resvg_elixir/resvg_elixir-v0.1.0/test/support/rustacean.svg"
   )
 
-{:ok, buffer} = Resvg.svg_string_to_png_buffer(rustacean_svg, resources_dir: path)
-H.kino_image_from_buffer(buffer)
+{:ok, png} = ResvgElixir.svg_string_to_png_binary(rustacean_svg, resources_dir: path)
+H.kino_image_from_png(png)
 ```
 
 ## Set a background color
 
 ```elixir
-{:ok, buffer} =
-  Resvg.svg_string_to_png_buffer(rustacean_svg, background: "gold", resources_dir: path)
+{:ok, png} =
+  ResvgElixir.svg_string_to_png_binary(rustacean_svg, background: "gold", resources_dir: path)
 
-H.kino_image_from_buffer(buffer)
+H.kino_image_from_png(png)
 ```
 
 ## Use a custom font
@@ -60,7 +62,7 @@ roboto_path = "#{path}/roboto.ttf"
 
 font_file =
   H.download_as!(
-    "https://raw.githubusercontent.com/mrdotb/resvg_nif/master/test/support/fonts/Roboto-Regular.ttf",
+    "https://raw.githubusercontent.com/Cees-Kettenis/resvg_elixir/resvg_elixir-v0.1.0/test/support/fonts/Roboto-Regular.ttf",
     roboto_path
   )
 
@@ -78,33 +80,33 @@ svg_string = """
   </svg>
 """
 
-{:ok, buffer} =
-  Resvg.svg_string_to_png_buffer(svg_string, resources_dir: path, font_files: [roboto_path])
+{:ok, png} =
+  ResvgElixir.svg_string_to_png_binary(svg_string, resources_dir: path, font_files: [roboto_path])
 
-H.kino_image_from_buffer(buffer)
+H.kino_image_from_png(png)
 ```
 
 ## Composition with svg <image> and :resources_dir
 
 ```elixir
 H.download_as!(
-  "https://raw.githubusercontent.com/mrdotb/resvg_nif/master/test/support/mdn-logo.png",
-  "#{path}/mdn-logo.png"
+  "https://raw.githubusercontent.com/Cees-Kettenis/resvg_elixir/resvg_elixir-v0.1.0/test/support/snapshots/rustacean.png",
+  "#{path}/rustacean.png"
 )
 
 svg_string = """
   <svg xmlns="http://www.w3.org/2000/svg" width="400" height="200"
     xmlns:xlink="http://www.w3.org/1999/xlink"
   >
-    <image xlink:href="mdn-logo.png" width="200" height="200" />
-    <image xlink:href="mdn-logo.png" x="200" width="200" height="200" />
+    <image xlink:href="rustacean.png" width="200" height="200" />
+    <image xlink:href="rustacean.png" x="200" width="200" height="200" />
   </svg>
 """
 
-{:ok, buffer} =
-  Resvg.svg_string_to_png_buffer(svg_string, resources_dir: path, font_files: [roboto_path])
+{:ok, png} =
+  ResvgElixir.svg_string_to_png_binary(svg_string, resources_dir: path, font_files: [roboto_path])
 
-H.kino_image_from_buffer(buffer)
+H.kino_image_from_png(png)
 ```
 
 ## Clip path
@@ -119,12 +121,12 @@ svg_string = """
         <circle cx="100" cy="100" r="100" fill="#FFFFFF" />
       </clipPath>
     </defs>
-    <image xlink:href="mdn-logo.png" width="200" height="200" clip-path="url(#clip-circle)" />
+    <image xlink:href="rustacean.png" width="200" height="200" clip-path="url(#clip-circle)" />
   </svg>
 """
 
-{:ok, buffer} =
-  Resvg.svg_string_to_png_buffer(svg_string, resources_dir: path, font_files: [roboto_path])
+{:ok, png} =
+  ResvgElixir.svg_string_to_png_binary(svg_string, resources_dir: path, font_files: [roboto_path])
 
-H.kino_image_from_buffer(buffer)
+H.kino_image_from_png(png)
 ```

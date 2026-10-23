@@ -120,7 +120,7 @@ impl FontProperties {
 }
 
 #[derive(NifStruct)]
-#[module = "Resvg.Options"]
+#[module = "ResvgElixir.Options"]
 pub struct Options {
     width: Option<u32>,
     height: Option<u32>,
@@ -152,7 +152,7 @@ pub struct Options {
 }
 
 #[derive(NifStruct)]
-#[module = "Resvg.Native.Node"]
+#[module = "ResvgElixir.Native.Node"]
 struct Node {
     pub id: String,
     pub x: f32,
@@ -840,7 +840,7 @@ pub fn init_fontdb<'a>(env: Env<'a>, options: Options) -> NifResult<Term<'a>> {
 }
 
 rustler::init!(
-    "Elixir.Resvg.Native",
+    "Elixir.ResvgElixir.Native",
     [
         svg_to_png,
         svg_string_to_png,

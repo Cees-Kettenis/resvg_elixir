@@ -1,4 +1,4 @@
-defmodule Resvg.Test do
+defmodule ResvgElixir.Test do
   use ExUnit.Case
   import Approval
 
@@ -23,7 +23,7 @@ defmodule Resvg.Test do
       output = image_path("snapshots/rustacean.png")
       reference = image_path("rustacean-reference.png")
 
-      assert :ok = Resvg.svg_to_png(input, output)
+      assert :ok = ResvgElixir.svg_to_png(input, output)
       assert File.exists?(output)
 
       approve(
@@ -36,7 +36,7 @@ defmodule Resvg.Test do
     test "fail input does not exist" do
       input = image_path("doesnotexist.svg")
       output = image_path("doesnotexist.png")
-      assert {:error, msg} = Resvg.svg_to_png(input, output)
+      assert {:error, msg} = ResvgElixir.svg_to_png(input, output)
       assert msg == "Error loading svg file: No such file or directory (os error 2)"
     end
 
@@ -45,7 +45,7 @@ defmodule Resvg.Test do
       output = image_path("snapshots/rustacean-120x80.png")
       reference = image_path("rustacean-120x80-reference.png")
 
-      assert :ok = Resvg.svg_to_png(input, output, width: 120, height: 80)
+      assert :ok = ResvgElixir.svg_to_png(input, output, width: 120, height: 80)
       assert File.exists?(output)
 
       approve(
@@ -60,7 +60,7 @@ defmodule Resvg.Test do
       output = image_path("snapshots/rustacean-red.png")
       reference = image_path("rustacean-red-reference.png")
 
-      assert :ok = Resvg.svg_to_png(input, output, background: "red")
+      assert :ok = ResvgElixir.svg_to_png(input, output, background: "red")
       assert File.exists?(output)
 
       approve(
@@ -75,7 +75,7 @@ defmodule Resvg.Test do
       output = image_path("rustacean-bug.png")
 
       assert {:error, "Error background: invalid value"} =
-               Resvg.svg_to_png(input, output, background: "bug")
+               ResvgElixir.svg_to_png(input, output, background: "bug")
     end
 
     test "zoom svg x2" do
@@ -83,7 +83,7 @@ defmodule Resvg.Test do
       output = image_path("snapshots/rustacean-zoom.png")
       reference = image_path("rustacean-zoom-reference.png")
 
-      assert :ok = Resvg.svg_to_png(input, output, zoom: 2.0)
+      assert :ok = ResvgElixir.svg_to_png(input, output, zoom: 2.0)
       assert File.exists?(output)
 
       approve(
@@ -105,7 +105,7 @@ defmodule Resvg.Test do
       output = image_path("cloud.png")
       reference = image_path("cloud-reference.png")
 
-      assert :ok = Resvg.svg_string_to_png(svg_string, output, resources_dir: @tmp)
+      assert :ok = ResvgElixir.svg_string_to_png(svg_string, output, resources_dir: @tmp)
       assert File.exists?(output)
 
       approve(
@@ -127,7 +127,7 @@ defmodule Resvg.Test do
         </svg>
       """
 
-      assert :ok = Resvg.svg_string_to_png(svg_string, output, resources_dir: @support_path)
+      assert :ok = ResvgElixir.svg_string_to_png(svg_string, output, resources_dir: @support_path)
 
       approve(
         snapshot: output,
@@ -148,7 +148,7 @@ defmodule Resvg.Test do
       output = image_path("cloud-from-buf.png")
       reference = image_path("cloud.png")
 
-      assert {:ok, buffer} = Resvg.svg_string_to_png_buffer(svg_string, resources_dir: @tmp)
+      assert {:ok, buffer} = ResvgElixir.svg_string_to_png_buffer(svg_string, resources_dir: @tmp)
       :ok = File.write!(output, buffer)
       assert File.exists?(output)
 
@@ -164,7 +164,7 @@ defmodule Resvg.Test do
     # NOTE (tmbb)
     # This is a minimal reproducible test case for a bug I found in resvg before v0.40.
     # I don't know why this specific example triggered the bug, but it's a useful test
-    # case to keep in case there is some regression in Resvg
+    # case to keep in case there is some regression in ResvgElixir
 
     # Because of repetitiveness in the rust rendering functions,
     # we test the behaviour in all of them.
@@ -176,7 +176,7 @@ defmodule Resvg.Test do
       svg_string = File.read!(input)
 
       :ok =
-        Resvg.svg_string_to_png(svg_string, output,
+        ResvgElixir.svg_string_to_png(svg_string, output,
           dpi: 256,
           skip_system_fonts: true,
           resources_dir: @tmp,
@@ -198,7 +198,7 @@ defmodule Resvg.Test do
       svg_string = File.read!(input)
 
       {:ok, image_data} =
-        Resvg.svg_string_to_png_buffer(svg_string,
+        ResvgElixir.svg_string_to_png_buffer(svg_string,
           dpi: 256,
           skip_system_fonts: true,
           resources_dir: @tmp,
@@ -221,7 +221,7 @@ defmodule Resvg.Test do
       reference = image_path("text-font-change-reference.png")
 
       :ok =
-        Resvg.svg_to_png(input, output,
+        ResvgElixir.svg_to_png(input, output,
           dpi: 256,
           skip_system_fonts: true,
           resources_dir: @tmp,
@@ -239,7 +239,7 @@ defmodule Resvg.Test do
   describe "warm font database via :fontdb option" do
     test "init_fontdb/1 returns a reusable handle" do
       assert {:ok, db} =
-               Resvg.init_fontdb(font_dirs: [font_dir()], skip_system_fonts: true)
+               ResvgElixir.init_fontdb(font_dirs: [font_dir()], skip_system_fonts: true)
 
       assert is_reference(db)
     end
@@ -251,11 +251,11 @@ defmodule Resvg.Test do
 
       svg_string = File.read!(input)
 
-      {:ok, db} = Resvg.init_fontdb(font_dirs: [font_dir()], skip_system_fonts: true)
+      {:ok, db} = ResvgElixir.init_fontdb(font_dirs: [font_dir()], skip_system_fonts: true)
 
       # No font_dirs/skip_system_fonts here — the warm db already carries them.
       :ok =
-        Resvg.svg_string_to_png(svg_string, output,
+        ResvgElixir.svg_string_to_png(svg_string, output,
           dpi: 256,
           resources_dir: @tmp,
           fontdb: db
@@ -275,10 +275,10 @@ defmodule Resvg.Test do
 
       svg_string = File.read!(input)
 
-      {:ok, db} = Resvg.init_fontdb(font_dirs: [font_dir()], skip_system_fonts: true)
+      {:ok, db} = ResvgElixir.init_fontdb(font_dirs: [font_dir()], skip_system_fonts: true)
 
       {:ok, binary} =
-        Resvg.svg_string_to_png_binary(svg_string,
+        ResvgElixir.svg_string_to_png_binary(svg_string,
           dpi: 256,
           resources_dir: @tmp,
           fontdb: db
@@ -297,18 +297,22 @@ defmodule Resvg.Test do
 
   describe "list_fonts/1" do
     test "return fonts list" do
-      {:ok, fonts} = Resvg.list_fonts(resources_dir: @tmp)
+      {:ok, fonts} = ResvgElixir.list_fonts(resources_dir: @tmp)
       assert is_list(fonts)
     end
 
     test "without system fonts" do
-      {:ok, fonts} = Resvg.list_fonts(skip_system_fonts: true, resources_dir: @tmp)
+      {:ok, fonts} = ResvgElixir.list_fonts(skip_system_fonts: true, resources_dir: @tmp)
       assert Enum.empty?(fonts)
     end
 
     test "load fonts from dirs" do
       {:ok, fonts} =
-        Resvg.list_fonts(skip_system_fonts: true, font_dirs: [font_dir()], resources_dir: @tmp)
+        ResvgElixir.list_fonts(
+          skip_system_fonts: true,
+          font_dirs: [font_dir()],
+          resources_dir: @tmp
+        )
 
       assert is_list(fonts)
       assert length(fonts) == 3
@@ -322,7 +326,7 @@ defmodule Resvg.Test do
       roboto = font_file("Roboto-Regular.ttf")
 
       {:ok, [font]} =
-        Resvg.list_fonts(skip_system_fonts: true, font_files: [roboto], resources_dir: @tmp)
+        ResvgElixir.list_fonts(skip_system_fonts: true, font_files: [roboto], resources_dir: @tmp)
 
       assert font =~ "Roboto"
     end
@@ -331,7 +335,7 @@ defmodule Resvg.Test do
       roboto = font_file("Rototo/Rototo-Regular.ttf")
 
       {:error, error} =
-        Resvg.list_fonts(skip_system_fonts: true, font_files: [roboto], resources_dir: @tmp)
+        ResvgElixir.list_fonts(skip_system_fonts: true, font_files: [roboto], resources_dir: @tmp)
 
       assert error == "Error loading font file: No such file or directory (os error 2)"
     end
@@ -341,7 +345,7 @@ defmodule Resvg.Test do
     test "returns id list" do
       input = image_path("rustacean.svg")
 
-      [node] = Resvg.query_all(input)
+      [%ResvgElixir.Native.Node{} = node] = ResvgElixir.query_all(input)
 
       assert node.id == "Layer-1"
       assert_in_delta(node.x, 13.1080, 0.0001)
@@ -355,7 +359,7 @@ defmodule Resvg.Test do
 
       input = image_path("text-measurement.svg")
 
-      [node] = Resvg.query_all(input, font_files: [roboto], resources_dir: @tmp)
+      [node] = ResvgElixir.query_all(input, font_files: [roboto], resources_dir: @tmp)
 
       assert node.id == "Text-Element-1"
       assert_in_delta(node.x, 0.2870, 0.0001)
@@ -371,7 +375,7 @@ defmodule Resvg.Test do
       # cannot shape/measure the text. (usvg 0.47 falls back to an available
       # system font when one exists, so system fonts must be disabled here to
       # keep this deterministic.)
-      assert Resvg.query_all(input, font_files: [], skip_system_fonts: true) == []
+      assert ResvgElixir.query_all(input, font_files: [], skip_system_fonts: true) == []
     end
   end
 end

@@ -1,18 +1,18 @@
-defmodule Resvg.MixProject do
+defmodule ResvgElixir.MixProject do
   use Mix.Project
 
-  @source_url "https://github.com/Cees-Kettenis/resvg_nif"
-  @version "0.6.0-pdf.3"
+  @source_url "https://github.com/Cees-Kettenis/resvg_elixir"
+  @version "0.1.0"
 
   def project do
     [
       aliases: aliases(),
-      app: :resvg,
+      app: :resvg_elixir,
       deps: deps(),
       docs: docs(),
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
-      name: "resvg",
+      name: "resvg_elixir",
       package: package(),
       start_permanent: Mix.env() == :prod,
       version: @version
@@ -36,11 +36,16 @@ defmodule Resvg.MixProject do
 
   defp package do
     [
-      description: "Svg to png. NIF bindings for resvg.",
-      maintainers: ["Mrdotb"],
+      description:
+        "Maintained Elixir bindings for resvg, tracking upstream development with tested rendering fixes.",
+      maintainers: ["Cornelis Kettenis"],
       licenses: ["MIT"],
       files: ~w(
-        lib native .formatter.exs README.md LICENSE.md CHANGELOG.md mix.exs checksum-*.exs
+        lib native/resvg_elixir/src native/resvg_elixir/Cargo.toml
+        native/resvg_elixir/Cargo.lock native/resvg_elixir/Cross.toml
+        native/resvg_elixir/.cargo .formatter.exs README.md LICENSE.md
+        CHANGELOG.md CONTRIBUTING.md CODE_OF_CONDUCT.md docs mix.exs
+        checksum-Elixir.ResvgElixir.Native.exs
       )s,
       links: %{"GitHub" => @source_url}
     ]
@@ -48,17 +53,19 @@ defmodule Resvg.MixProject do
 
   def docs do
     [
-      source_ref: "master",
       main: "readme",
       extras: [
         "CHANGELOG.md": [],
         "CONTRIBUTING.md": [title: "Contributing"],
         "CODE_OF_CONDUCT.md": [title: "Code of Conduct"],
         "LICENSE.md": [title: "License"],
-        "README.md": [title: "Overview"]
+        "README.md": [title: "Overview"],
+        "docs/migration.md": [title: "Migrating from resvg"],
+        "docs/upstream.md": [title: "Upstream renderer and carried fixes"],
+        "docs/releases.md": [title: "Maintaining and publishing releases"]
       ],
       source_url: @source_url,
-      source_ref: "v#{@version}",
+      source_ref: "resvg_elixir-v#{@version}",
       homepage_url: @source_url,
       formatters: ["html"]
     ]
@@ -68,11 +75,11 @@ defmodule Resvg.MixProject do
     [
       "format.all": [
         "format",
-        "cmd cargo fmt --manifest-path native/resvg/Cargo.toml"
+        "cmd cargo fmt --manifest-path native/resvg_elixir/Cargo.toml"
       ],
       "format.check": [
         "format --check-formatted",
-        "cmd cargo fmt --manifest-path native/resvg/Cargo.toml -- --check"
+        "cmd cargo fmt --manifest-path native/resvg_elixir/Cargo.toml -- --check"
       ]
     ]
   end

@@ -20,7 +20,7 @@ erl_crash.dump
 *.ez
 
 # Ignore package tarball (built via "mix hex.build").
-resvg_nif-*.tar
+resvg_elixir-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
@@ -35,10 +35,11 @@ resvg_nif-*.tar
 /test/support/*.png
 
 # The directory that rust will compile to for testing.
-/native/resvg/target/
+/native/resvg_elixir/target/
 
 # The checksum files for precompiled NIFs
 checksum-*.exs
+!checksum-Elixir.ResvgElixir.Native.exs
 
 # livebooks
 /livebooks/*

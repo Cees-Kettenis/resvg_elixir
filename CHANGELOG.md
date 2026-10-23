@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+First release under the `resvg_elixir` identity, version `0.1.0` in preparation.
+
+- Rename the package/OTP app to `resvg_elixir` and the public namespace to
+  `ResvgElixir`, maintained by Cornelis Kettenis.
+- Keep resvg and usvg pinned to `5464662c0ec59ecc830c52418673b322da1791b5`,
+  the tested 0.48.1 development snapshot with carried rendering fixes.
+- Rename the native crate, struct identities, binary assets and checksum
+  manifest, so this package can coexist with the original `resvg` binding.
+- Update examples, upstream provenance, migration instructions and release
+  automation for the independently maintained package.
+
+The entries below describe the inherited `resvg` wrapper history. Earlier
+`0.6.0-pdf.*` GitHub binaries belong to the original namespace.
+
 ---
 
 ## [0.6.0] – 2026-07-14

@@ -1,57 +1,59 @@
----
 name: Tests
 
 on:
   push:
     branches:
-      - master
-      - release/*
+      - "**"
   pull_request:
-    branches:
-      - master
+
+permissions:
+  contents: read
 
 jobs:
   code_quality_and_tests:
     runs-on: ubuntu-latest
     env:
       MIX_ENV: test
-      RESVG_BUILD: true
-    name: "[${{matrix.otp}}/${{matrix.elixir}}] Tests on resvg_nif [OTP/Elixir]"
+      RESVG_ELIXIR_BUILD: "1"
+    name: "Tests [Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }}]"
     strategy:
       fail-fast: false
       matrix:
-        otp: [27]
-        elixir: [1.17.3]
+        include:
+          - {otp: "25", elixir: "1.16"}
+          - {otp: "27", elixir: "1.18"}
+          - {otp: "28", elixir: "1.19"}
+          - {otp: "29", elixir: "1.20"}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - uses: dtolnay/rust-toolchain@stable
-
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
-
-      - name: Cache hex deps
-        id: mix-cache
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
           path: |
             deps
             _build
-            !_build/*/lib/resvg
-          key: ${{ runner.os }}[${{ matrix.otp }}/${{ matrix.elixir }}]-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-
+            !_build/*/lib/resvg_elixir
+            native/resvg_elixir/target
+          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-resvg-elixir-${{ hashFiles('mix.lock', 'native/resvg_elixir/Cargo.lock') }}
       - run: mix deps.get
-
       - run: mix deps.compile
-
       - run: mix format.check
-
+      - run: cargo check --locked --manifest-path native/resvg_elixir/Cargo.toml
+      - run: cargo test --locked --manifest-path native/resvg_elixir/Cargo.toml
       - run: mix compile --warnings-as-errors
-        env:
-          RUST_BACKTRACE: 1
-
       - run: mix test
+      - name: Check dependency hygiene
+        if: matrix.elixir == '1.20'
+        run: |
+          mix deps.unlock --check-unused
+          mix hex.audit
+      - name: Build documentation
+        if: matrix.elixir == '1.20'
+        env:
+          MIX_ENV: dev
+        run: mix docs --warnings-as-errors

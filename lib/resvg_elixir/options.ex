@@ -1,6 +1,6 @@
-defmodule Resvg.Options do
+defmodule ResvgElixir.Options do
   @moduledoc """
-  Options for Resvg.
+  Options for ResvgElixir.
   """
 
   @typedoc """

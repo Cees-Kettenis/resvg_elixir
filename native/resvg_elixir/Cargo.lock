@@ -367,17 +367,6 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "resvg"
-version = "0.1.0"
-dependencies = [
- "resvg 0.48.1",
- "rustler",
- "svgtypes",
- "tiny-skia",
- "usvg",
-]
-
-[[package]]
-name = "resvg"
 version = "0.48.1"
 source = "git+https://github.com/Cees-Kettenis/resvg.git?rev=5464662c0ec59ecc830c52418673b322da1791b5#5464662c0ec59ecc830c52418673b322da1791b5"
 dependencies = [
@@ -391,6 +380,17 @@ dependencies = [
  "tiny-skia",
  "usvg",
  "zune-jpeg",
+]
+
+[[package]]
+name = "resvg_elixir"
+version = "0.1.0"
+dependencies = [
+ "resvg",
+ "rustler",
+ "svgtypes",
+ "tiny-skia",
+ "usvg",
 ]
 
 [[package]]

@@ -1,12 +1,11 @@
 [package]
-name = "resvg"
+name = "resvg_elixir"
 version = "0.1.0"
-# We don't use versioning in the in this crate.
-# Please check the `mix.exs` file at the root of this project for the current version.
+# The package release version is defined in mix.exs.
 edition = "2018"
 
 [lib]
-name = "resvg"
+name = "resvg_elixir"
 path = "src/lib.rs"
 crate-type = ["cdylib"]
 

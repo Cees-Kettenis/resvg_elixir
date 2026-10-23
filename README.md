@@ -1,80 +1,117 @@
-# PDF rendering fork
+# resvg_elixir
 
-Version `0.6.0-pdf.2` pins Resvg and usvg to
-[`fb9ddf1a`](https://github.com/Cees-Kettenis/resvg/commit/fb9ddf1aacbffc6c1b5a5f0f50a6c079e08fb622).
-It starts from upstream main including merged filter-transform PR #1155, then
-applies the marker viewport fix #1163, shared feImage paint fix #1164, and
-text-path positioning fix #1166. The superseded affine feImage patch #1165 is
-omitted. The experimental fractional pattern patch is not included.
-Precompiled NIFs are published on this fork's GitHub release. The Elixir API is
-unchanged. `RESVG_BUILD=1` builds the same pinned source locally.
+Maintained Elixir bindings for [resvg](https://github.com/linebender/resvg),
+an SVG renderer written in Rust.
 
-# Resvg (Rust NIFs for elixir)
+Maintained by [Cornelis Kettenis](https://github.com/Cees-Kettenis), this fork
+tracks upstream resvg development and carries tested rendering fixes between
+upstream releases. It builds on [mrdotb/resvg_nif](https://github.com/mrdotb/resvg_nif).
+The original authors retain their attribution and MIT license.
 
-[![Build Status](https://github.com/mrdotb/resvg_nif/workflows/Tests/badge.svg)](https://github.com/mrdotb/resvg_nif/workflows/Tests/badge.svg)
-[![Module Version](https://img.shields.io/hexpm/v/resvg.svg)](https://hex.pm/packages/resvg)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/resvg)
-[![Total Download](https://img.shields.io/hexpm/dt/resvg.svg)](https://hex.pm/packages/resvg)
-[![License](https://img.shields.io/hexpm/l/resvg.svg)](https://github.com/mrdotb/resvg_nif/blob/master/LICENSE.md)
+The package and OTP application are `resvg_elixir`; the public module is
+`ResvgElixir`. These names let it coexist with the original `resvg` package.
 
-Native Implemented Function (NIF) bindings for the [resvg](https://github.com/RazrFalcon/resvg) library.
+## Renderer baseline
 
-About resvg from its documentation:
-> resvg is an SVG rendering library. The core idea is to make a fast, small, portable SVG library with the goal to support the whole SVG spec.
+The current renderer is based on the resvg/usvg 0.48.1 development line with
+upstream changes after that release and additional rendering fixes. Both Rust
+crates are pinned to commit
+[`5464662c0ec59ecc830c52418673b322da1791b5`](https://github.com/Cees-Kettenis/resvg/commit/5464662c0ec59ecc830c52418673b322da1791b5).
+
+Each release uses this exact snapshot.
+See [the upstream guide](docs/upstream.md) for the carried fixes and update policy.
 
 ## Installation
 
-The package can be installed
-by adding `resvg_nif` to your list of dependencies in `mix.exs`:
+The first `resvg_elixir` release is being prepared. Until its native binaries
+and Hex package are published, build this checkout from source as described in
+[Contributing](CONTRIBUTING.md).
+
+After publication, add the package to `mix.exs`:
 
 ```elixir
-def deps do
+defp deps do
   [
-    {:resvg, "~> 0.6.0"}
+    {:resvg_elixir, "~> 0.1.0"}
   ]
 end
 ```
 
-## Usage
+Released packages use checksum-verified native binaries from this repository's
+GitHub releases. Supported binary targets cover Linux GNU and musl on x86-64
+and ARM64, Linux 32-bit ARM and RISC-V, macOS on Intel and Apple Silicon, and Windows
+on x86-64. The exact target and NIF ABI matrix lives in the
+[release workflow](https://github.com/Cees-Kettenis/resvg_elixir/blob/master/.github/workflows/release.yml). A source build requires Rust
+and the source-build dependency described below.
 
-Convert svg to png with:
+## Render SVG
 
 ```elixir
-:ok = Resvg.svg_to_png("input.svg", "output.png")
+:ok = ResvgElixir.svg_to_png("input.svg", "output.png")
 
-svg_string = """
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 004.5 4.5H18a3.75 3.75 0 001.332-7.257 3 3 0 00-3.758-3.848 5.25 5.25 0 00-10.233 2.33A4.502 4.502 0 002.25 15z" />
-</svg>
-"""
-:ok = Resvg.svg_string_to_png(svg_string, "output.png", resources_dir: "/tmp")
+svg = ~s(<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="blue"/></svg>)
+
+{:ok, png} =
+  ResvgElixir.svg_string_to_png_binary(svg, resources_dir: System.tmp_dir!())
+
+File.write!("circle.png", png)
 ```
 
-## Livebook introduction
+`svg_string_to_png_binary/2` returns a PNG binary. The older
+`svg_string_to_png_buffer/2` API returns a list of bytes. File rendering,
+font inspection and SVG node bounds remain available through `ResvgElixir`.
+Pass `resources_dir` for SVG strings so relative image references have a base.
 
-Easiest way to get started and try more advanced example is is to run the Livebook.
+## Reuse fonts
 
-[![Run in Livebook](https://livebook.dev/badge/v1/blue.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmrdotb%2Fresvg_nif%2Fblob%2Fmaster%2Flivebooks%2Fexample.livemd)
+```elixir
+{:ok, fontdb} =
+  ResvgElixir.init_fontdb(
+    font_files: ["/path/to/DejaVuSans.ttf"],
+    skip_system_fonts: true
+  )
 
-## Contributing
+{:ok, png} =
+  ResvgElixir.svg_string_to_png_binary(svg,
+    resources_dir: System.tmp_dir!(),
+    fontdb: fontdb
+  )
+```
 
-You can contribute to resvg_nif. Please check the [CONTRIBUTING.md](CONTRIBUTING.md) guide for more information.
+A reusable font database avoids parsing the same fonts for each render. When
+`fontdb` is supplied, the database already determines the font selection;
+other font-loading options are ignored.
 
-This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to our [CODE_OF_CONDUCT.md](/CODE_OF_CONDUCT.md).
+## Build from source
 
-### How to release a new version to hex
+In an application that needs source builds, include Rustler explicitly:
 
-1. Update the version in both `mix.exs` and `README.md`.
-2. Tag the commit with the version number, for example: `git tag v0.4.0 commit_hash`.
-3. Push the commit and the tag using: `git push origin master && git push --tags`.
-4. Wait for the CI to generate all the NIFs.
-5. Generate the NIF checksum with: `mix rustler_precompiled.download Resvg.Native --all`.
-6. Verify that the generated checksum is correct.
-7. Publish the package with: `mix hex.publish`.
+```elixir
+{:resvg_elixir, "~> 0.1.0"},
+{:rustler, "~> 0.36.0", runtime: false}
+```
 
-Let me know if you'd like to adjust anything further!
-## Copyright and License
+Then compile with:
 
-Copyright (c) 2023 Mrdotb
+```sh
+RESVG_ELIXIR_BUILD=1 mix deps.compile resvg_elixir --force
+```
 
-This work is free. You can redistribute it and / or modify it under the terms of the MIT License. See the LICENSE.md file for more details.
+The same pinned resvg/usvg revision is used for source builds and release
+binaries. The Rust fork is fetched by Cargo; it does not need a separate
+crates.io publication.
+
+## Documentation
+
+- [Migrating from resvg](docs/migration.md)
+- [Upstream renderer and carried fixes](docs/upstream.md)
+- [Maintaining and publishing releases](docs/releases.md)
+- [Contributing](CONTRIBUTING.md)
+- [Livebook examples](https://github.com/Cees-Kettenis/resvg_elixir/blob/master/livebooks/example.livemd)
+- [Changelog](CHANGELOG.md)
+
+## License
+
+The Elixir bindings are MIT licensed. See [LICENSE.md](LICENSE.md) for the
+original and fork copyright notices. The underlying renderer and its dependencies
+retain their own licenses, recorded in their source repositories.

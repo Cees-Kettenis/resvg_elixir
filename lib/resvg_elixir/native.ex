@@ -1,10 +1,18 @@
-defmodule Resvg.Native do
+defmodule ResvgElixir.Native do
   @moduledoc false
 
   defmodule Node do
-    @moduledoc false
+    @moduledoc "A named SVG node and its drawing bounds, returned by `ResvgElixir.query_all/2`."
 
     defstruct ~w(id x y width height)a
+
+    @type t :: %__MODULE__{
+            id: String.t(),
+            x: float(),
+            y: float(),
+            width: float(),
+            height: float()
+          }
   end
 
   mix_config = Mix.Project.config()
@@ -12,11 +20,12 @@ defmodule Resvg.Native do
   github_url = mix_config[:package][:links]["GitHub"]
 
   use RustlerPrecompiled,
-    otp_app: :resvg,
-    crate: "resvg",
-    base_url: "#{github_url}/releases/download/v#{version}",
-    force_build: System.get_env("RESVG_BUILD") in ["1", "true"],
+    otp_app: :resvg_elixir,
+    crate: "resvg_elixir",
+    base_url: "#{github_url}/releases/download/resvg_elixir-v#{version}",
+    force_build: System.get_env("RESVG_ELIXIR_BUILD") in ["1", "true"],
     version: version,
+    nif_versions: ["2.15"],
     targets: ~w(
       arm-unknown-linux-gnueabihf
       aarch64-apple-darwin

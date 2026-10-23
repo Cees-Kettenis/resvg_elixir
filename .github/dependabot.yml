@@ -1,14 +1,14 @@
-# Please see the documentation for all configuration options:
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
 version: 2
 updates:
-  - package-ecosystem: "mix"
-    directory: "/"
+  - package-ecosystem: mix
+    directory: /
     schedule:
-      interval: "daily"
-
-  - package-ecosystem: "cargo"
-    directory: "/native/resvg"
+      interval: daily
+  - package-ecosystem: cargo
+    directory: /native/resvg_elixir
     schedule:
-      interval: "daily"
+      interval: daily
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
