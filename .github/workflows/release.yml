@@ -5,6 +5,15 @@ on:
     tags:
       - "resvg_elixir-v*"
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing release tag to resume; leave empty for build-only validation
+        type: string
+        required: false
+        default: ""
+
+env:
+  RELEASE_TAG: ${{ inputs.release_tag || (startsWith(github.ref, 'refs/tags/') && github.ref_name) || '' }}
 
 permissions:
   contents: write
@@ -18,8 +27,8 @@ jobs:
       matrix:
         nif: ["2.15"]
         job:
-          - {target: x86_64-apple-darwin, os: macos-15}
-          - {target: aarch64-apple-darwin, os: macos-15}
+          - {target: x86_64-apple-darwin, os: macos-15-intel}
+          - {target: aarch64-apple-darwin, os: macos-15-intel}
           - {target: arm-unknown-linux-gnueabihf, os: ubuntu-22.04, use-cross: true}
           - {target: aarch64-unknown-linux-gnu, os: ubuntu-22.04, use-cross: true}
           - {target: aarch64-unknown-linux-musl, os: ubuntu-22.04, use-cross: true}
@@ -30,13 +39,15 @@ jobs:
           - {target: x86_64-pc-windows-msvc, os: windows-2022}
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_tag && format('refs/tags/{0}', inputs.release_tag) || github.ref }}
       - name: Read and validate release version
         shell: bash
         run: |
           version=$(sed -n 's/^  @version "\(.*\)"/\1/p' mix.exs)
           test -n "$version"
-          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
-            test "$GITHUB_REF_NAME" = "resvg_elixir-v$version"
+          if [[ -n "$RELEASE_TAG" ]]; then
+            test "$RELEASE_TAG" = "resvg_elixir-v$version"
           fi
           echo "PROJECT_VERSION=$version" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@stable
@@ -58,20 +69,24 @@ jobs:
           name: ${{ steps.build-crate.outputs.file-name }}
           path: ${{ steps.build-crate.outputs.file-path }}
       - name: Upload native archive
-        if: startsWith(github.ref, 'refs/tags/')
+        if: env.RELEASE_TAG != ''
         uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          overwrite_files: false
           files: ${{ steps.build-crate.outputs.file-path }}
 
   prepare_hex_package:
     name: Prepare checksums and Hex package
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || inputs.release_tag
     needs: build_release
     runs-on: ubuntu-22.04
     env:
       RESVG_ELIXIR_BUILD: "1"
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_tag && format('refs/tags/{0}', inputs.release_tag) || github.ref }}
       - uses: dtolnay/rust-toolchain@stable
       - uses: erlef/setup-beam@v1
         with:
@@ -83,6 +98,8 @@ jobs:
       - run: mix hex.build
       - uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          overwrite_files: false
           files: |
             checksum-Elixir.ResvgElixir.Native.exs
             resvg_elixir-*.tar
@@ -97,7 +114,7 @@ jobs:
         include:
           - {os: ubuntu-22.04, elixir: "1.14", otp: "25"}
           - {os: ubuntu-22.04, elixir: "1.20", otp: "29"}
-          - {os: macos-15, elixir: "1.20", otp: "29"}
+          - {os: macos-15-intel, elixir: "1.20", otp: "29"}
           - {os: windows-2022, elixir: "1.20", otp: "29"}
     env:
       MIX_ENV: prod
@@ -105,6 +122,8 @@ jobs:
       RESVG_ELIXIR_PACKAGE: ${{ github.workspace }}/tmp/release-package
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_tag && format('refs/tags/{0}', inputs.release_tag) || github.ref }}
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ matrix.otp }}
@@ -113,7 +132,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p tmp/release-download "$RESVG_ELIXIR_PACKAGE"
-          gh release download "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" \
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
             --pattern 'resvg_elixir-*.tar' --dir tmp/release-download
           tar -xf tmp/release-download/resvg_elixir-*.tar -C tmp/release-download
           tar -xzf tmp/release-download/contents.tar.gz -C "$RESVG_ELIXIR_PACKAGE"

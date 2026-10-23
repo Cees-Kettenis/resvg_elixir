@@ -36,6 +36,15 @@ the minimum supported Elixir version on Linux.
 
 Hex publication remains a maintainer action.
 
+To resume an existing tagged release with the current workflow configuration:
+
+```sh
+gh workflow run release.yml --ref master -f release_tag=resvg_elixir-vVERSION
+```
+
+The retry checks out the existing tag and preserves uploaded assets. macOS
+builds use explicit Intel hosts to compile both Intel and Apple Silicon targets.
+
 Inspect the workflow results for every supported platform. Do not advertise
 a binary target whose matching release artifact failed to build.
 
