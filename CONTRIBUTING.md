@@ -21,9 +21,8 @@ RESVG_ELIXIR_BUILD=1 mix compile --warnings-as-errors
 RESVG_ELIXIR_BUILD=1 mix test
 ```
 
-Building this checkout from source is necessary before the first branded
-release has published binaries and checksums. The rename deliberately does not
-reuse the original fork's `Resvg.Native` binaries.
+Use `RESVG_ELIXIR_BUILD=1` during development so the tests exercise the local
+native source. Released packages load their own checksum-verified binaries.
 
 ## Checks
 

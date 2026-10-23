@@ -4,7 +4,7 @@ One `resvg_elixir` release consists of a Hex package and platform-specific nativ
 binaries hosted on this repository's GitHub release. A separate crates.io release
 of the Rust renderer fork is not required.
 
-The initial `0.1.0` identity is release preparation. The old `0.6.0-pdf.*`
+Version `0.1.0` is the first release under the new identity. The old `0.6.0-pdf.*`
 releases belong to `Resvg.Native` and are not compatible binary artifacts for
 "ResvgElixir.Native". Release tags use the `resvg_elixir-v` prefix to avoid
 colliding with inherited upstream tags.
@@ -45,6 +45,12 @@ gh workflow run release.yml --ref master -f release_tag=resvg_elixir-vVERSION
 The retry checks out the existing tag and preserves uploaded assets. macOS
 builds use explicit Intel hosts to compile both Intel and Apple Silicon targets.
 
+To test an already prepared package without rebuilding native binaries:
+
+```sh
+gh workflow run release.yml --ref master -f release_tag=resvg_elixir-vVERSION -f verify_only=true
+```
+
 Inspect the workflow results for every supported platform. Do not advertise
 a binary target whose matching release artifact failed to build.
 
@@ -64,8 +70,8 @@ version has a checksum manifest. The task still downloads and hashes all
 release assets. Include `checksum-Elixir.ResvgElixir.Native.exs` in the Hex
 package and commit it to the repository after verification.
 
-Do not copy checksums from the old module or a different version. The manifest
-is intentionally absent before the first branded native release has been built.
+Do not copy checksums from the old module or a different version. Verify every
+advertised native archive before committing the new version's manifest.
 
 ## Validate a fresh consumer
 

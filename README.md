@@ -23,11 +23,7 @@ See [the upstream guide](docs/upstream.md) for the carried fixes and update poli
 
 ## Installation
 
-The first `resvg_elixir` release is being prepared. Until its native binaries
-and Hex package are published, build this checkout from source as described in
-[Contributing](CONTRIBUTING.md).
-
-After publication, add the package to `mix.exs`:
+Add the package to `mix.exs`:
 
 ```elixir
 defp deps do

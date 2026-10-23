@@ -11,6 +11,11 @@ on:
         type: string
         required: false
         default: ""
+      verify_only:
+        description: Only test an existing release package; requires release_tag
+        type: boolean
+        required: false
+        default: false
 
 env:
   RELEASE_TAG: ${{ inputs.release_tag || (startsWith(github.ref, 'refs/tags/') && github.ref_name) || '' }}
@@ -20,6 +25,7 @@ permissions:
 
 jobs:
   build_release:
+    if: ${{ !inputs.verify_only }}
     name: NIF ${{ matrix.nif }} - ${{ matrix.job.target }}
     runs-on: ${{ matrix.job.os }}
     strategy:
@@ -78,7 +84,7 @@ jobs:
 
   prepare_hex_package:
     name: Prepare checksums and Hex package
-    if: startsWith(github.ref, 'refs/tags/') || inputs.release_tag
+    if: (startsWith(github.ref, 'refs/tags/') || inputs.release_tag) && !inputs.verify_only
     needs: build_release
     runs-on: ubuntu-22.04
     env:
@@ -106,6 +112,7 @@ jobs:
 
   test_hex_package:
     name: Package [${{ matrix.os }}, Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }}]
+    if: always() && !cancelled() && (needs.prepare_hex_package.result == 'success' || inputs.verify_only)
     needs: prepare_hex_package
     runs-on: ${{ matrix.os }}
     strategy:
@@ -119,7 +126,7 @@ jobs:
     env:
       MIX_ENV: prod
       GH_TOKEN: ${{ github.token }}
-      RESVG_ELIXIR_PACKAGE: ${{ github.workspace }}/tmp/release-package
+      RESVG_ELIXIR_PACKAGE: tmp/release-package
     steps:
       - uses: actions/checkout@v7
         with:
@@ -131,6 +138,7 @@ jobs:
       - name: Download and unpack the Hex package
         shell: bash
         run: |
+          test -n "$RELEASE_TAG"
           mkdir -p tmp/release-download "$RESVG_ELIXIR_PACKAGE"
           gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
             --pattern 'resvg_elixir-*.tar' --dir tmp/release-download
